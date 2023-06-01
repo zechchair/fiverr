@@ -1,0 +1,179 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Project "eden" {
+  database_type: 'PostgreSQL'
+  Note: 'Eden'
+}
+
+Table Blog {
+  id Int [pk, increment]
+  createdAt DateTime [default: `now()`, not null]
+  category String
+  description String
+  title String [not null]
+  image String
+  content String [not null]
+  userId String
+  author User
+}
+
+Table User {
+  id String [pk]
+  role user_role [not null]
+  name String
+  password String [not null]
+  image String
+  email String [unique, not null]
+  emailVerified DateTime
+  createdAt DateTime [default: `now()`, not null]
+  profilFreelancer Freelancer
+  profilCompany Company
+  blogs Blog [not null]
+}
+
+Table Freelancer {
+  id Int [pk, increment]
+  name String [not null]
+  competance Json[] [not null]
+  level work_level
+  studiesId Int
+  studies studies
+  phoneN String
+  birthDate DateTime
+  cv String
+  cin String
+  school_certificate String
+  userId String [unique, not null]
+  account User [not null]
+  availability availability [not null, default: 'available']
+  anonymous Boolean [not null, default: true]
+  coming_pay Float [not null, default: 0]
+  pocket Float [not null, default: 0]
+  deals Deal [not null]
+}
+
+Table Company {
+  id Int [pk, increment]
+  name String [not null]
+  userId String [unique, not null]
+  account User [not null]
+  siret String
+  projects Project [not null]
+}
+
+Table Project {
+  id Int [pk, increment]
+  title String [not null]
+  description String [not null]
+  budgetTime Int [not null]
+  budget Float
+  offers Json[] [not null]
+  status project_status [not null, default: 'pending']
+  deals Deal [not null]
+  companyId Int [not null]
+  owner Company [not null]
+  invoice Invoice
+}
+
+Table Deal {
+  id Int [pk, increment]
+  description String
+  deadline DateTime [default: `now()`, not null]
+  price Float [not null]
+  status deal_status [not null]
+  milestone Json[] [not null]
+  freelancerId Int [not null]
+  worker Freelancer [not null]
+  projectId Int [not null]
+  project Project [not null]
+  transactions Transaction [not null]
+}
+
+Table Transaction {
+  id Int [pk, increment]
+  dealId Int [not null]
+  deal Deal [not null]
+  Amount Float [not null]
+  type transaction_type [not null]
+  createdAt DateTime [default: `now()`, not null]
+  transactionN String [not null]
+  transactionStrip String [not null]
+  invoiceId Int [not null]
+  invoice Invoice [not null]
+}
+
+Table Invoice {
+  id Int [pk, increment]
+  projectId Int [unique]
+  project Project
+  transactions Transaction [not null]
+}
+
+Table studies {
+  id Int [pk, increment]
+  domain String [not null]
+  freelancer Freelancer [not null]
+}
+
+Enum user_role {
+  admin
+  company
+  freelancer
+}
+
+Enum work_level {
+  cap_bep
+  bac
+  bac_2
+  bac_3
+  bac_4
+  bac_5
+  bac_8
+  plus_bac_8
+}
+
+Enum availability {
+  available
+  booked
+  unavailable
+}
+
+Enum project_status {
+  pending
+  inProgress
+  done
+}
+
+Enum deal_status {
+  waitingPayment
+  inProgress
+  done
+  confirmed
+}
+
+Enum transaction_type {
+  fromCompany
+  toFreelancer
+}
+
+Ref: Blog.userId > User.id [delete: Cascade]
+
+Ref: Freelancer.studiesId > studies.id [delete: Cascade]
+
+Ref: Freelancer.userId - User.id [delete: Cascade]
+
+Ref: Company.userId - User.id [delete: Cascade]
+
+Ref: Project.companyId > Company.id [delete: Cascade]
+
+Ref: Deal.freelancerId > Freelancer.id [delete: Cascade]
+
+Ref: Deal.projectId > Project.id [delete: Cascade]
+
+Ref: Transaction.dealId > Deal.id [delete: Cascade]
+
+Ref: Transaction.invoiceId > Invoice.id [delete: Cascade]
+
+Ref: Invoice.projectId - Project.id [delete: Cascade]

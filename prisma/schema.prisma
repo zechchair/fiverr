@@ -1,0 +1,175 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator dbml {
+  provider            = "prisma-dbml-generator"
+  output              = "../dbml"
+  outputName          = "eden.dbml"
+  projectName         = "eden"
+  projectDatabaseType = "PostgreSQL"
+  projectNote         = "Eden"
+}
+
+
+model Blog {
+  id      Int     @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  category String?
+  description String?
+  title   String
+  image   String?
+  content String
+  userId String?
+  author            User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+}
+
+model User {
+  id               String         @id @default(uuid())
+  role             user_role
+  name          String?
+  password         String
+  image            String?
+  email            String      @unique
+  emailVerified    DateTime?
+  createdAt        DateTime    @default(now())
+  profilFreelancer Freelancer?
+  profilCompany     Company?
+  blogs Blog[]
+}
+
+model Freelancer {
+  id                 Int          @id @default(autoincrement())
+  name          String
+  competance         Json[]
+  level              work_level?
+  studiesId          Int?
+  studies            studies?     @relation(fields: [studiesId], references: [id], onDelete: Cascade)
+  phoneN             String?
+  birthDate          DateTime?
+  cv                 String?
+  cin                String?
+  school_certificate String?
+  userId             String          @unique
+  account            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  availability       availability @default(available)
+  anonymous          Boolean      @default(true)
+  coming_pay         Float        @default(0)
+  pocket             Float        @default(0)
+  deals              Deal[]
+}
+
+model Company {
+  id       Int       @id @default(autoincrement())
+  name     String
+  userId   String       @unique
+  account  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  siret    String?
+  projects Project[]
+}
+
+model Project {
+  id          Int            @id @default(autoincrement())
+  title       String
+  description String
+  budgetTime  Int
+  budget      Float?
+  offers      Json[]
+  status      project_status @default(pending)
+
+  deals     Deal[]
+  companyId Int
+  owner     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  invoice   Invoice?
+}
+
+model Deal {
+  id           Int           @id @default(autoincrement())
+  description  String?
+  deadline     DateTime      @default(now())
+  price        Float
+  status       deal_status
+  milestone    Json[]
+  freelancerId Int
+  worker       Freelancer    @relation(fields: [freelancerId], references: [id], onDelete: Cascade)
+  projectId    Int
+  project      Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+}
+
+model Transaction {
+  id               Int              @id @default(autoincrement())
+  dealId           Int
+  deal             Deal             @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  Amount           Float
+  type             transaction_type
+  createdAt        DateTime         @default(now())
+  transactionN     String
+  transactionStrip String
+  invoiceId        Int
+  invoice          Invoice          @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+}
+
+model Invoice {
+  id        Int      @id @default(autoincrement())
+  projectId Int?     @unique
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  transactions Transaction[]
+}
+
+model studies {
+  id         Int          @id @default(autoincrement())
+  domain     String
+  freelancer Freelancer[]
+}
+
+enum user_role {
+  admin
+  company
+  freelancer
+}
+
+enum work_level {
+  cap_bep
+  bac
+  bac_2
+  bac_3
+  bac_4
+  bac_5
+  bac_8
+  plus_bac_8
+}
+
+enum availability {
+  available
+  booked
+  unavailable
+}
+
+enum project_status {
+  pending
+  inProgress
+  done
+}
+
+enum deal_status {
+  waitingPayment
+  inProgress
+  done
+  confirmed
+}
+
+enum transaction_type {
+  fromCompany
+  toFreelancer
+}

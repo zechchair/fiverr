@@ -1,0 +1,45 @@
+{
+  "name": "eden",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@headlessui/react": "^1.7.14",
+    "@heroicons/react": "^2.0.18",
+    "@hookform/resolvers": "^3.1.0",
+    "@prisma/client": "^4.13.0",
+    "@tailwindcss/forms": "^0.5.3",
+    "@types/react": "18.2.5",
+    "@types/react-dom": "18.2.4",
+    "autoprefixer": "10.4.14",
+    "browser-image-compression": "^2.0.2",
+    "classnames": "^2.3.2",
+    "i": "^0.3.7",
+    "jspdf": "^2.5.1",
+    "next": "13.4.1",
+    "next-auth": "^4.22.1",
+    "nodemailer": "^6.9.1",
+    "npm": "^9.6.6",
+    "postcss": "8.4.23",
+    "prisma-dbml-generator": "^0.9.1",
+    "react": "18.2.0",
+    "react-device-detect": "^2.2.3",
+    "react-dom": "18.2.0",
+    "react-hook-form": "^7.43.9",
+    "react-hot-toast": "^2.4.1",
+    "react-quill": "^2.0.0",
+    "tailwindcss": "3.3.2",
+    "zod": "^3.21.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "prisma": "^4.13.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4"
+  }
+}
